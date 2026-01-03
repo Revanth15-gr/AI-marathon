@@ -1,0 +1,2353 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare AP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&amp;family=Orbitron:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    body { box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+    :root {
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(99, 102, 241, 0.1); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #6366f1, #8b5cf6); border-radius: 3px; }
+    
+    .quantum-bg {
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a1035 25%, #0f0a1f 50%, #1a0a2e 75%, #0a0a1a 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0; }
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 25s infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100%) rotate(720deg); opacity: 0; }
+    }
+    
+    .glow-text { text-shadow: 0 0 10px rgba(99, 102, 241, 0.5), 0 0 20px rgba(139, 92, 246, 0.3); }
+    .glow-box { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 40px rgba(139, 92, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.1); }
+    
+    .glass { background: rgba(15, 10, 31, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(99, 102, 241, 0.2); }
+    .glass-light { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    
+    .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .hover-lift:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3); }
+    
+    .shimmer { position: relative; overflow: hidden; }
+    .shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+    @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+    
+    .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .scale-in { animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    
+    .live-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; animation: livePulse 1.5s infinite; }
+    @keyframes livePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
+    
+    .voice-active { animation: voicePulse 1.5s ease-in-out infinite; }
+    @keyframes voicePulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 50% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); } }
+    
+    .sound-bar { width: 4px; margin: 0 2px; background: linear-gradient(180deg, #6366f1, #8b5cf6); border-radius: 2px; animation: soundWave 0.5s ease-in-out infinite alternate; }
+    .sound-bar:nth-child(1) { height: 12px; animation-delay: 0s; }
+    .sound-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+    .sound-bar:nth-child(3) { height: 15px; animation-delay: 0.2s; }
+    .sound-bar:nth-child(4) { height: 25px; animation-delay: 0.15s; }
+    .sound-bar:nth-child(5) { height: 18px; animation-delay: 0.25s; }
+    @keyframes soundWave { 0% { transform: scaleY(0.4); } 100% { transform: scaleY(1); } }
+    
+    .nav-link { position: relative; transition: all 0.3s ease; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 50%; width: 0; height: 2px; background: linear-gradient(90deg, #6366f1, #8b5cf6); transition: all 0.3s ease; transform: translateX(-50%); }
+    .nav-link:hover::after, .nav-link.active::after { width: 80%; }
+    .nav-link.active { color: #a5b4fc; background: rgba(99, 102, 241, 0.2); }
+    
+    .heartbeat { animation: heartbeat 1s ease-in-out infinite; }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.1); } 28% { transform: scale(1); } 42% { transform: scale(1.1); } 70% { transform: scale(1); } }
+    
+    .time-slot { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .time-slot:hover:not(.booked):not(.selected) { transform: scale(1.05); background: rgba(99, 102, 241, 0.3); border-color: #6366f1; }
+    .time-slot.selected { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; transform: scale(1.05); box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+    .time-slot.booked { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; cursor: not-allowed; }
+    
+    .modal-backdrop { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); }
+    
+    .status-scheduled { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .status-preop { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .status-surgery { background: linear-gradient(135deg, #10b981, #059669); }
+    .status-recovery { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .status-completed { background: linear-gradient(135deg, #6b7280, #4b5563); }
+    
+    .spinner { width: 24px; height: 24px; border: 3px solid rgba(99, 102, 241, 0.2); border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    
+    .toast { animation: toastIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .toast-exit { animation: toastOut 0.3s ease-in forwards; }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(-20px) scale(0.9); } }
+    
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 40; }
+    .chat-bubble { width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5); transition: all 0.3s; }
+    .chat-bubble:hover { transform: scale(1.1); }
+    .chat-window { width: 380px; max-width: calc(100vw - 40px); height: 500px; max-height: 70%; }
+    
+    .typing-indicator span { display: inline-block; width: 8px; height: 8px; background: #6366f1; border-radius: 50%; margin: 0 2px; animation: typingBounce 1.4s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+    
+    .input-focus { transition: all 0.3s; }
+    .input-focus:focus { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); border-color: #6366f1; }
+    
+    /* Dashboard Enhanced Styles */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+    
+    .progress-ring { transform: rotate(-90deg); }
+    .progress-ring-circle {
+      stroke-dasharray: 251;
+      stroke-dashoffset: 251;
+      animation: progressFill 1.5s ease-out forwards;
+    }
+    @keyframes progressFill { to { stroke-dashoffset: 0; } }
+    
+    .welcome-card {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: welcomeGlow 8s ease-in-out infinite;
+    }
+    @keyframes welcomeGlow {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(-20%) translateY(20%); }
+    }
+    
+    .activity-line {
+      position: relative;
+      padding-left: 24px;
+    }
+    .activity-line::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 24px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.5), transparent);
+    }
+    .activity-line:last-child::before { display: none; }
+    
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: badgePulse 2s infinite;
+    }
+    @keyframes badgePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    
+    .health-tip-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .upcoming-card {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.05));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    
+    .count-up { animation: countUp 1s ease-out; }
+    @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .floating-icon {
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    .wave-bg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(99,102,241,0.1)' d='M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,181.3C672,192,768,160,864,138.7C960,117,1056,107,1152,112C1248,117,1344,139,1392,149.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+      background-size: cover;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full quantum-bg text-gray-100 overflow-auto">
+  <div class="particles" id="particles"></div>
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+  <div id="loadingOverlay" class="fixed inset-0 z-50 bg-black/80 backdrop-filter backdrop-blur-sm flex items-center justify-center hidden">
+   <div class="text-center">
+    <div class="spinner mx-auto mb-4" style="width:50px;height:50px;"></div>
+    <p class="text-indigo-300 animate-pulse text-lg">Processing...</p>
+   </div>
+  </div><!-- Auth Section -->
+  <div id="authSection" class="min-h-full flex items-center justify-center p-4">
+   <div class="w-full max-w-md">
+    <div class="glass rounded-3xl p-8 glow-box scale-in">
+     <div class="text-center mb-8">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center mb-4 floating-icon"><span class="text-4xl">⚛️</span>
+      </div>
+      <h1 id="mainTitle" class="text-3xl font-bold font-orbitron glow-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">AP Healthcare</h1>
+      <p id="welcomeMessage" class="text-sm text-indigo-300 mt-2">Andhra Pradesh Healthcare Network</p>
+     </div><!-- Login Form -->
+     <div id="loginForm">
+      <h2 class="text-xl font-bold text-center mb-6">Welcome Back</h2>
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+       <div><label for="loginEmail" class="block text-sm font-medium text-gray-300 mb-1">Email</label> <input type="email" id="loginEmail" required placeholder="Enter your email" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div><label for="loginPassword" class="block text-sm font-medium text-gray-300 mb-1">Password</label> <input type="password" id="loginPassword" required placeholder="Enter your password" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div id="loginError" class="hidden text-red-400 text-sm text-center p-2 bg-red-500/10 rounded-lg"></div><button type="submit" id="loginBtn" class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl font-bold text-white hover:opacity-90 transition-all shimmer"> Sign In </button>
+      </form>
+      <p class="text-center mt-6 text-gray-400 text-sm">Don't have an account? <button onclick="showSignUp()" class="text-indigo-400 hover:text-indigo-300 font-medium">Sign Up</button></p>
+     </div><!-- Sign Up Form -->
+     <div id="signUpForm" class="hidden">
+      <h2 class="text-xl font-bold text-center mb-6">Create Account</h2>
+      <form onsubmit="handleSignUp(event)" class="space-y-4">
+       <div><label for="signupName" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label> <input type="text" id="signupName" required placeholder="Enter your full name" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div><label for="signupEmail" class="block text-sm font-medium text-gray-300 mb-1">Email</label> <input type="email" id="signupEmail" required placeholder="Enter your email" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div><label for="signupPhone" class="block text-sm font-medium text-gray-300 mb-1">Phone</label> <input type="tel" id="signupPhone" required placeholder="Enter your phone number" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div><label for="signupPassword" class="block text-sm font-medium text-gray-300 mb-1">Password</label> <input type="password" id="signupPassword" required minlength="6" placeholder="Create a password (min 6 chars)" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div><label for="signupConfirmPassword" class="block text-sm font-medium text-gray-300 mb-1">Confirm Password</label> <input type="password" id="signupConfirmPassword" required placeholder="Confirm your password" class="w-full px-4 py-3 glass-light rounded-xl focus:outline-none input-focus text-white placeholder-gray-500">
+       </div>
+       <div id="signupError" class="hidden text-red-400 text-sm text-center p-2 bg-red-500/10 rounded-lg"></div><button type="submit" id="signupBtn" class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-bold text-white hover:opacity-90 transition-all shimmer"> Create Account </button>
+      </form>
+      <p class="text-center mt-6 text-gray-400 text-sm">Already have an account? <button onclick="showLogin()" class="text-indigo-400 hover:text-indigo-300 font-medium">Sign In</button></p>
+     </div>
+    </div>
+   </div>
+  </div><!-- Main App Section -->
+  <div id="mainApp" class="hidden"><!-- Header -->
+   <header class="relative z-10 glass border-b border-indigo-500/20 py-3 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center floating-icon"><span class="text-xl">⚛️</span>
+      </div>
+      <div>
+       <h1 class="text-lg font-bold font-orbitron glow-text bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent"> Healthcare AP</h1>
+       <p class="text-xs text-indigo-300">Andhra Pradesh Network</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-4">
+      <div class="glass-light rounded-full px-3 py-2 flex items-center gap-2"><span class="text-cyan-400 text-sm">📍</span> <select id="districtSelect" onchange="loadHospitals()" class="bg-transparent text-sm text-gray-200 focus:outline-none cursor-pointer max-w-32"> <option value="all" class="bg-gray-900">All Districts</option> </select>
+      </div>
+      <div class="relative"><button onclick="showPage('appointments')" class="p-2 glass-light rounded-lg hover:bg-indigo-500/20 transition-colors"> <span class="text-xl">🔔</span> </button>
+       <div id="notificationBadge" class="notification-badge hidden">
+        0
+       </div>
+      </div>
+      <div class="flex items-center gap-2">
+       <div class="live-dot" style="width:8px;height:8px;"></div><span class="text-green-400 text-xs hidden md:inline">Online</span>
+      </div>
+      <div class="flex items-center gap-2">
+       <div id="userAvatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold"></div><button onclick="handleLogout()" class="text-xs text-gray-400 hover:text-red-400 transition-colors">Logout</button>
+      </div>
+     </div>
+    </div>
+   </header><!-- Navigation -->
+   <nav class="relative z-10 glass border-b border-indigo-500/10 py-2 px-2 sticky top-0">
+    <div class="max-w-7xl mx-auto flex nav-scroll overflow-x-auto gap-1 justify-start md:justify-center"><button onclick="showPage('dashboard')" class="nav-link active px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap">🏠 Dashboard</button> <button onclick="showPage('hospitals')" class="nav-link px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap">🏥 Hospitals</button> <button onclick="showPage('appointments')" class="nav-link px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap">📅 Appointments</button> <button onclick="showPage('liveTracking')" class="nav-link px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex items-center gap-1">
+      <div class="live-dot" style="width:6px;height:6px;"></div> Tracking </button> <button onclick="showPage('voiceChat')" class="nav-link px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap">🎤 Voice</button>
+    </div>
+   </nav>
+   <main class="relative z-10 p-4 md:p-6 max-w-7xl mx-auto pb-24"><!-- Enhanced Dashboard Page -->
+    <section id="dashboard" class="page"><!-- Welcome Banner -->
+     <div class="welcome-card rounded-2xl p-6 mb-6 fade-in-up relative overflow-hidden">
+      <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+       <div>
+        <h2 class="text-2xl md:text-3xl font-bold font-orbitron mb-2">Welcome back, <span id="userNameDisplay" class="text-yellow-300"></span>! 👋</h2>
+        <p class="text-indigo-100 text-sm md:text-base">Your health journey starts here. What would you like to do today?</p>
+        <div class="flex items-center gap-4 mt-3">
+         <div class="flex items-center gap-1 text-sm text-indigo-200"><span class="live-dot" style="width:8px;height:8px;"></span> <span>System Active</span>
+         </div>
+         <div class="text-sm text-indigo-200" id="currentDateTime"></div>
+        </div>
+       </div>
+       <div class="flex gap-2"><button onclick="showPage('hospitals')" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl font-medium text-sm transition-all backdrop-blur-sm"> 🏥 Find Doctor </button> <button onclick="toggleChatbot()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl font-medium text-sm transition-all backdrop-blur-sm"> 💬 Chat Now </button>
+       </div>
+      </div>
+      <div class="wave-bg"></div>
+     </div><!-- Stats Grid -->
+     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card rounded-2xl p-5 hover-lift fade-in-up" style="animation-delay:0.1s;">
+       <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/30 to-purple-500/30 flex items-center justify-center"><span class="text-2xl">🏥</span>
+        </div><span class="text-xs px-2 py-1 rounded-full bg-indigo-500/20 text-indigo-300 font-medium">AP Network</span>
+       </div>
+       <div class="text-3xl font-bold font-orbitron text-indigo-400 count-up" id="totalHospitals">
+        26
+       </div>
+       <div class="text-sm text-gray-400 mt-1">
+        Partner Hospitals
+       </div>
+       <div class="mt-2 h-1 bg-indigo-500/20 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style="width: 100%;"></div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5 hover-lift fade-in-up" style="animation-delay:0.2s;">
+       <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center"><span class="text-2xl">👨‍⚕️</span>
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-300 font-medium">Available</span>
+       </div>
+       <div class="text-3xl font-bold font-orbitron text-green-400 count-up" id="totalDoctors">
+        52
+       </div>
+       <div class="text-sm text-gray-400 mt-1">
+        Expert Doctors
+       </div>
+       <div class="mt-2 h-1 bg-green-500/20 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width: 85%;"></div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5 hover-lift fade-in-up" style="animation-delay:0.3s;">
+       <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center"><span class="text-2xl">📅</span>
+        </div><span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-300 font-medium">Today</span>
+       </div>
+       <div class="text-3xl font-bold font-orbitron text-purple-400 count-up" id="todayAppointments">
+        0
+       </div>
+       <div class="text-sm text-gray-400 mt-1">
+        Appointments
+       </div>
+       <div class="mt-2 h-1 bg-purple-500/20 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" id="appointmentProgress" style="width: 0%;"></div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5 hover-lift fade-in-up" style="animation-delay:0.4s;">
+       <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center"><span class="text-2xl heartbeat">❤️</span>
+        </div><span class="text-xs px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-300 font-medium flex items-center gap-1"> <span class="live-dot" style="width:6px;height:6px;"></span> Live </span>
+       </div>
+       <div class="text-3xl font-bold font-orbitron text-cyan-400 count-up" id="activePatients">
+        0
+       </div>
+       <div class="text-sm text-gray-400 mt-1">
+        Active Cases
+       </div>
+       <div class="mt-2 h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" id="activeProgress" style="width: 0%;"></div>
+       </div>
+      </div>
+     </div><!-- Main Content Grid -->
+     <div class="grid lg:grid-cols-3 gap-6 mb-6"><!-- Quick Actions -->
+      <div class="glass rounded-2xl p-5 fade-in-up" style="animation-delay:0.5s;">
+       <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="text-2xl">⚡</span> <span class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Quick Actions</span></h3>
+       <div class="grid grid-cols-2 gap-3"><button onclick="showPage('hospitals')" class="glass-light rounded-xl p-4 text-center hover-lift group relative overflow-hidden">
+         <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+         <div class="relative">
+          <div class="text-3xl mb-2 group-hover:scale-110 transition-transform floating-icon">
+           🏥
+          </div>
+          <div class="text-sm font-semibold">
+           Find Hospital
+          </div>
+          <div class="text-xs text-gray-500 mt-1">
+           26 locations
+          </div>
+         </div></button> <button onclick="showPage('voiceChat')" class="glass-light rounded-xl p-4 text-center hover-lift group relative overflow-hidden">
+         <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+         <div class="relative">
+          <div class="text-3xl mb-2 group-hover:scale-110 transition-transform floating-icon">
+           🎤
+          </div>
+          <div class="text-sm font-semibold">
+           Voice Assistant
+          </div>
+          <div class="text-xs text-gray-500 mt-1">
+           AI Powered
+          </div>
+         </div></button> <button onclick="showPage('appointments')" class="glass-light rounded-xl p-4 text-center hover-lift group relative overflow-hidden">
+         <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+         <div class="relative">
+          <div class="text-3xl mb-2 group-hover:scale-110 transition-transform floating-icon">
+           📋
+          </div>
+          <div class="text-sm font-semibold">
+           My Bookings
+          </div>
+          <div class="text-xs text-gray-500 mt-1">
+           View all
+          </div>
+         </div></button> <button onclick="toggleChatbot()" class="glass-light rounded-xl p-4 text-center hover-lift group relative overflow-hidden">
+         <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+         <div class="relative">
+          <div class="text-3xl mb-2 group-hover:scale-110 transition-transform floating-icon">
+           💬
+          </div>
+          <div class="text-sm font-semibold">
+           Chat Bot
+          </div>
+          <div class="text-xs text-gray-500 mt-1">
+           24/7 Support
+          </div>
+         </div></button>
+       </div>
+      </div><!-- Upcoming Appointments -->
+      <div class="glass rounded-2xl p-5 fade-in-up" style="animation-delay:0.6s;">
+       <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg flex items-center gap-2"><span class="text-2xl">📅</span> <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Upcoming</span></h3><button onclick="showPage('appointments')" class="text-xs text-indigo-400 hover:text-indigo-300">View All →</button>
+       </div>
+       <div id="upcomingAppointments" class="space-y-3 max-h-72 overflow-y-auto">
+        <div class="text-center py-8 text-gray-500">
+         <div class="text-4xl mb-2 floating-icon">
+          📋
+         </div>
+         <p class="text-sm font-medium">No upcoming appointments</p>
+         <p class="text-xs text-gray-600 mt-1">Book your first appointment today!</p><button onclick="showPage('hospitals')" class="mt-3 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"> Book Now </button>
+        </div>
+       </div>
+      </div><!-- Health Tips -->
+      <div class="glass rounded-2xl p-5 fade-in-up" style="animation-delay:0.7s;">
+       <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="text-2xl">💡</span> <span class="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">Health Tips</span></h3>
+       <div class="space-y-3">
+        <div class="health-tip-card rounded-xl p-3 hover-lift">
+         <div class="flex items-start gap-3">
+          <div class="text-2xl">
+           🥗
+          </div>
+          <div>
+           <h4 class="font-semibold text-sm text-green-400">Eat Healthy</h4>
+           <p class="text-xs text-gray-400 mt-1">Include more fruits and vegetables in your daily diet.</p>
+          </div>
+         </div>
+        </div>
+        <div class="health-tip-card rounded-xl p-3 hover-lift">
+         <div class="flex items-start gap-3">
+          <div class="text-2xl">
+           🏃
+          </div>
+          <div>
+           <h4 class="font-semibold text-sm text-green-400">Stay Active</h4>
+           <p class="text-xs text-gray-400 mt-1">30 minutes of exercise daily keeps you fit.</p>
+          </div>
+         </div>
+        </div>
+        <div class="health-tip-card rounded-xl p-3 hover-lift">
+         <div class="flex items-start gap-3">
+          <div class="text-2xl">
+           💧
+          </div>
+          <div>
+           <h4 class="font-semibold text-sm text-green-400">Stay Hydrated</h4>
+           <p class="text-xs text-gray-400 mt-1">Drink at least 8 glasses of water daily.</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Bottom Section -->
+     <div class="grid lg:grid-cols-2 gap-6"><!-- Activity Timeline -->
+      <div class="glass rounded-2xl p-5 fade-in-up" style="animation-delay:0.8s;">
+       <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="text-2xl">📊</span> <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Recent Activity</span></h3>
+       <div id="activityTimeline" class="space-y-3 max-h-48 overflow-y-auto">
+        <div class="text-center py-6 text-gray-500">
+         <p class="text-sm">No recent activity</p>
+        </div>
+       </div>
+      </div><!-- AP Districts Coverage Map -->
+      <div class="glass rounded-2xl p-5 fade-in-up" style="animation-delay:0.9s;">
+       <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><span class="text-2xl">🗺️</span> <span class="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">AP Districts Coverage</span></h3>
+       <div class="grid grid-cols-4 md:grid-cols-5 gap-2">
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('visakhapatnam')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Vizag
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('vijayawada')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Vijayawada
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('guntur')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Guntur
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('tirupati')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Tirupati
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('nellore')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Nellore
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('kurnool')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Kurnool
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('kakinada')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Kakinada
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('rajahmundry')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Rajam.
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center hover-lift cursor-pointer group" onclick="setDistrictFromDashboard('anantapur')">
+         <div class="text-lg group-hover:scale-110 transition-transform">
+          📍
+         </div>
+         <div class="text-xs font-medium truncate">
+          Anantapur
+         </div>
+        </div>
+        <div class="glass-light rounded-lg p-2 text-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border-indigo-500/30">
+         <div class="text-lg">
+          ✨
+         </div>
+         <div class="text-xs font-bold text-indigo-300">
+          +17 more
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Hospitals Page -->
+    <section id="hospitals" class="page hidden">
+     <div class="glass rounded-xl p-4 mb-4 fade-in-up">
+      <h2 class="text-lg font-bold mb-2 flex items-center gap-2"><span class="text-2xl">🏥</span> <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Andhra Pradesh Hospitals</span></h2>
+      <p class="text-gray-400 text-sm mb-3">Browse hospitals across all 26 districts</p>
+      <div class="flex gap-2 overflow-x-auto pb-2 nav-scroll"><button onclick="setDistrict('all')" class="district-btn px-3 py-1 rounded-full text-xs bg-indigo-500/30 text-indigo-300 whitespace-nowrap">All Districts</button> <button onclick="setDistrict('visakhapatnam')" class="district-btn px-3 py-1 rounded-full text-xs glass-light whitespace-nowrap">Visakhapatnam</button> <button onclick="setDistrict('vijayawada')" class="district-btn px-3 py-1 rounded-full text-xs glass-light whitespace-nowrap">Vijayawada</button> <button onclick="setDistrict('guntur')" class="district-btn px-3 py-1 rounded-full text-xs glass-light whitespace-nowrap">Guntur</button> <button onclick="setDistrict('tirupati')" class="district-btn px-3 py-1 rounded-full text-xs glass-light whitespace-nowrap">Tirupati</button> <button onclick="setDistrict('nellore')" class="district-btn px-3 py-1 rounded-full text-xs glass-light whitespace-nowrap">Nellore</button>
+      </div>
+     </div>
+     <div id="hospitalsList" class="space-y-4"></div>
+    </section><!-- Appointments Page -->
+    <section id="appointments" class="page hidden">
+     <div class="glass rounded-xl p-4 fade-in-up">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
+       <h2 class="text-lg font-bold flex items-center gap-2"><span class="text-2xl">📅</span> <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">My Appointments</span></h2><select id="filterStatus" onchange="filterAppointments()" class="glass-light rounded-lg px-3 py-2 text-sm focus:outline-none"> <option value="all">All Status</option> <option value="scheduled">Scheduled</option> <option value="preop">Pre-Op</option> <option value="surgery">In Surgery</option> <option value="recovery">Recovery</option> <option value="completed">Completed</option> </select>
+      </div>
+      <div id="appointmentsList" class="space-y-3"></div>
+     </div>
+    </section><!-- Live Tracking Page -->
+    <section id="liveTracking" class="page hidden">
+     <div class="glass rounded-xl p-4 fade-in-up">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-lg font-bold flex items-center gap-2">
+        <div class="live-dot"></div><span class="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">Live Patient Tracking</span></h2>
+       <div class="text-xs text-gray-400">
+        Updated: <span id="lastUpdateTime">--:--</span>
+       </div>
+      </div>
+      <div class="glass-light rounded-lg p-3 mb-4"><label for="livePatientSelect" class="block text-xs font-medium text-gray-400 mb-1">Select Patient:</label> <select id="livePatientSelect" onchange="selectLivePatient()" class="w-full glass rounded-lg px-3 py-2 focus:outline-none text-sm"> <option value="">-- Select Patient --</option> </select>
+      </div>
+      <div id="liveStatusPanel" class="hidden space-y-4">
+       <div id="livePatientInfo" class="bg-gradient-to-r from-indigo-600/50 to-purple-600/50 rounded-xl p-4"></div>
+       <div class="glass-light rounded-xl p-4">
+        <h3 class="font-bold mb-3 flex items-center gap-2"><span class="heartbeat text-red-500">❤  </span> Vitals</h3>
+        <div id="vitalsGrid" class="grid grid-cols-3 md:grid-cols-5 gap-2"></div>
+       </div>
+      </div>
+      <div id="noPatientSelected" class="text-center py-12 text-gray-500">
+       <div class="text-5xl mb-3">
+        👤
+       </div>
+       <p class="text-sm">Select a patient to view live tracking</p>
+      </div>
+     </div>
+    </section><!-- Voice Chat Page -->
+    <section id="voiceChat" class="page hidden">
+     <div class="glass rounded-xl p-4 fade-in-up">
+      <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="text-2xl">🎤</span> <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Voice Assistant</span></h2>
+      <div class="text-center mb-6">
+       <p class="text-gray-400 text-sm mb-1">Talk to our AI healthcare assistant</p>
+       <p class="text-xs text-gray-500">Ask about hospitals, doctors, or medical queries</p>
+      </div>
+      <div id="voiceStatus" class="text-center mb-4">
+       <div class="inline-flex items-center gap-2 px-4 py-2 glass-light rounded-full"><span id="voiceStatusIcon" class="text-lg">🎤</span> <span id="voiceStatusText" class="text-xs text-gray-300">Click to start</span>
+       </div>
+      </div><!-- Microphone Permission Status -->
+      <div id="micPermissionStatus" class="hidden mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+       <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2"><span class="text-yellow-500">🎤</span>
+         <div>
+          <h4 class="font-bold text-yellow-400 text-xs">Microphone Access Required</h4>
+          <p class="text-yellow-300/70 text-xs">Click button below to enable voice commands</p>
+         </div>
+        </div><button onclick="requestMicrophoneAccess()" class="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-lg text-xs font-medium text-yellow-300 transition-colors"> Allow Access </button>
+       </div>
+      </div>
+      <div id="micPermissionGranted" class="hidden mb-4 p-2 bg-green-500/10 border border-green-500/30 rounded-xl">
+       <div class="flex items-center justify-center gap-2"><span class="text-green-500">✅</span> <span class="text-green-400 text-xs font-medium">Microphone access granted - Ready to listen!</span>
+       </div>
+      </div>
+      <div id="soundWaveContainer" class="hidden justify-center items-end h-10 mb-4">
+       <div class="sound-bar"></div>
+       <div class="sound-bar"></div>
+       <div class="sound-bar"></div>
+       <div class="sound-bar"></div>
+       <div class="sound-bar"></div>
+      </div>
+      <div class="flex justify-center mb-6"><button id="voiceButton" onclick="toggleVoiceRecognition()" class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-xl hover-lift glow-box transition-all">
+        <svg id="micIcon" class="w-8 h-8 text-white" fill="none" viewbox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+        <svg id="stopIcon" class="w-8 h-8 text-white hidden" fill="currentColor" viewbox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" />
+        </svg></button>
+      </div>
+      <div class="glass-light rounded-xl p-3 mb-3">
+       <h3 class="font-medium text-xs mb-1 text-gray-400">    ️ You Said:</h3>
+       <div id="voiceTranscript" class="min-h-12 text-gray-300 italic text-sm">
+        Your speech appears here...
+       </div>
+      </div>
+      <div class="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-xl p-3 mb-3 border border-indigo-500/20">
+       <h3 class="font-medium text-xs mb-1 text-indigo-300 flex items-center gap-1"><span>🤖</span> Response:</h3>
+       <div id="voiceResponse" class="min-h-16 text-gray-200 text-sm">
+        Ready to help! Ask about hospitals, doctors, or appointments.
+       </div>
+       <div id="speakingIndicator" class="hidden mt-2 flex items-center gap-1 text-indigo-400 text-xs"><span class="animate-pulse">🔊</span> Speaking...
+       </div>
+      </div>
+      <div class="glass-light rounded-xl p-3 mb-3">
+       <h4 class="font-medium text-xs mb-2 text-gray-400">🎯 Quick Commands:</h4>
+       <div class="flex flex-wrap gap-2"><button onclick="simulateVoiceInput('Find hospitals in Visakhapatnam')" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-indigo-500/20 transition-colors">🏥 Vizag Hospitals</button> <button onclick="simulateVoiceInput('Find a heart doctor')" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-indigo-500/20 transition-colors">🫀 Heart Doctor</button> <button onclick="simulateVoiceInput('Book an appointment')" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-indigo-500/20 transition-colors">📅 Book</button> <button onclick="simulateVoiceInput('Hello')" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-indigo-500/20 transition-colors">👋 Hello</button>
+       </div>
+      </div>
+      <div id="browserSupportNotice" class="hidden p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+       <div class="flex items-start gap-2"><span class="text-yellow-500">⚠️</span>
+        <div>
+         <h4 class="font-bold text-yellow-400 text-xs">Voice Not Supported</h4>
+         <p class="text-yellow-300/70 text-xs mt-0.5">Use Chrome/Edge for best experience. Try quick commands!</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main><!-- Chatbot -->
+   <div class="chatbot-container">
+    <div id="chatWindow" class="hidden chat-window glass rounded-2xl mb-3 flex flex-col glow-box scale-in overflow-hidden">
+     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-3 flex items-center justify-between">
+      <div class="flex items-center gap-2"><span class="text-xl">🤖</span>
+       <div>
+        <div class="font-bold text-sm">
+         Healthcare Assistant
+        </div>
+        <div class="text-xs text-indigo-200 flex items-center gap-1">
+         <div class="live-dot" style="width:6px;height:6px;"></div> Online
+        </div>
+       </div>
+      </div><button onclick="toggleChatbot()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors text-sm">✕</button>
+     </div>
+     <div id="chatMessages" class="flex-1 p-3 overflow-y-auto space-y-3">
+      <div class="flex gap-2">
+       <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs flex-shrink-0">
+        🤖
+       </div>
+       <div class="glass-light rounded-xl rounded-tl-sm p-2 max-w-[80%]">
+        <p class="text-sm">Hello! 👋 I'm your healthcare assistant. How can I help you today?</p>
+        <p class="text-xs text-gray-500 mt-1">You can ask about hospitals, doctors, or appointments in Andhra Pradesh.</p>
+       </div>
+      </div>
+     </div>
+     <form onsubmit="sendChatMessage(event)" class="p-3 border-t border-indigo-500/20">
+      <div class="flex gap-2"><input type="text" id="chatInput" placeholder="Type your message..." class="flex-1 px-3 py-2 glass-light rounded-xl focus:outline-none input-focus text-sm" autocomplete="off"> <button type="submit" class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center hover:opacity-90 transition-opacity">
+        <svg class="w-5 h-5 text-white" fill="none" viewbox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg></button>
+      </div>
+     </form>
+    </div>
+    <div id="chatBubble" onclick="toggleChatbot()" class="chat-bubble"><span class="text-2xl">💬</span>
+    </div>
+   </div>
+  </div><!-- Appointment Modal -->
+  <div id="appointmentModal" class="fixed inset-0 z-50 hidden">
+   <div class="modal-backdrop absolute inset-0" onclick="closeAppointmentModal()"></div>
+   <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xl max-h-[90%] overflow-auto">
+    <div class="glass rounded-2xl p-5 m-4 glow-box scale-in">
+     <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold flex items-center gap-2"><span>📅</span> <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Book Appointment</span></h2><button onclick="closeAppointmentModal()" class="w-8 h-8 rounded-full glass-light flex items-center justify-center hover:bg-red-500/20 transition-colors">✕</button>
+     </div>
+     <div id="appointmentDoctorInfo" class="bg-gradient-to-r from-indigo-600/30 to-purple-600/30 rounded-xl p-3 mb-4 border border-indigo-500/20"></div><!-- Email Notification Info -->
+     <div class="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-3 mb-4">
+      <div class="flex items-center gap-2"><span class="text-xl">📧</span>
+       <div>
+        <h4 class="font-semibold text-sm text-green-400">Email Confirmation</h4>
+        <p class="text-xs text-gray-400">You'll receive a confirmation email after booking</p>
+       </div>
+      </div>
+     </div>
+     <form id="appointmentForm" onsubmit="submitAppointment(event)" class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+       <div><label for="patientName" class="block text-xs font-medium text-gray-400 mb-1">Patient Name *</label> <input type="text" id="patientName" required class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+       </div>
+       <div><label for="patientAge" class="block text-xs font-medium text-gray-400 mb-1">Age *</label> <input type="number" id="patientAge" required min="1" max="120" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+       <div><label for="patientPhone" class="block text-xs font-medium text-gray-400 mb-1">Phone *</label> <input type="tel" id="patientPhone" required class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+       </div>
+       <div><label for="patientEmail" class="block text-xs font-medium text-gray-400 mb-1">Email * (for notification)</label> <input type="email" id="patientEmail" required class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm" placeholder="Your email for confirmation">
+       </div>
+      </div>
+      <div><label for="surgeryType" class="block text-xs font-medium text-gray-400 mb-1">Procedure Type *</label> <select id="surgeryType" required onchange="calculateFees()" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm bg-transparent"> <option value="" class="bg-gray-900">Select Procedure</option> <option value="consultation" class="bg-gray-900">General Consultation - ₹500</option> <option value="cardiac" class="bg-gray-900">Cardiac Procedure - ₹2,000</option> <option value="neuro" class="bg-gray-900">Neurology - ₹1,800</option> <option value="orthopedic" class="bg-gray-900">Orthopedic - ₹1,500</option> <option value="general" class="bg-gray-900">General Surgery - ₹800</option> <option value="pediatric" class="bg-gray-900">Pediatric Care - ₹600</option> </select>
+      </div>
+      <div><label for="preferredDate" class="block text-xs font-medium text-gray-400 mb-1">Preferred Date *</label> <input type="date" id="preferredDate" required onchange="generateTimeSlots()" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+      </div>
+      <div><label class="block text-xs font-medium text-gray-400 mb-1">Time Slot *</label>
+       <div id="timeSlots" class="grid grid-cols-5 gap-1"></div>
+      </div>
+      <div><label for="priority" class="block text-xs font-medium text-gray-400 mb-1">Priority</label> <select id="priority" onchange="calculateFees()" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm bg-transparent"> <option value="routine" class="bg-gray-900">Routine</option> <option value="urgent" class="bg-gray-900">Urgent (+25%)</option> <option value="emergency" class="bg-gray-900">Emergency (+50%)</option> </select>
+      </div><!-- Payment Section -->
+      <div class="border-t border-indigo-500/20 pt-4 mt-4">
+       <h3 class="font-bold text-sm mb-3 flex items-center gap-2"><span class="text-lg">💳</span> <span class="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Payment Details</span></h3><!-- Consultation Fee Display -->
+       <div id="feeBreakdown" class="glass-light rounded-xl p-3 mb-3">
+        <div class="space-y-2 text-sm">
+         <div class="flex justify-between items-center"><span class="text-gray-400">Consultation Fee</span> <span id="consultationFee" class="font-bold text-white">₹500</span>
+         </div>
+         <div class="flex justify-between items-center"><span class="text-gray-400">Booking Charges</span> <span class="font-medium text-white">₹50</span>
+         </div>
+         <div class="flex justify-between items-center text-xs"><span class="text-gray-500">GST (18%)</span> <span id="gstAmount" class="text-gray-400">₹99</span>
+         </div>
+         <div class="border-t border-indigo-500/20 pt-2 mt-2">
+          <div class="flex justify-between items-center"><span class="font-bold text-indigo-300">Total Amount</span> <span id="totalAmount" class="font-bold text-xl text-green-400">₹649</span>
+          </div>
+         </div>
+        </div>
+       </div><!-- Payment Method Selection -->
+       <div class="mb-3"><label class="block text-xs font-medium text-gray-400 mb-2">Select Payment Method *</label>
+        <div class="grid grid-cols-2 gap-2"><label class="payment-option cursor-pointer"> <input type="radio" name="paymentMethod" value="upi" class="hidden" onchange="selectPaymentMethod('upi')">
+          <div id="paymentUpi" class="glass-light rounded-xl p-3 text-center border-2 border-transparent hover:border-indigo-500/50 transition-all">
+           <div class="text-2xl mb-1">
+            📱
+           </div>
+           <div class="text-xs font-medium">
+            UPI
+           </div>
+           <div class="text-xs text-gray-500">
+            GPay, PhonePe, Paytm
+           </div>
+          </div></label> <label class="payment-option cursor-pointer"> <input type="radio" name="paymentMethod" value="card" class="hidden" onchange="selectPaymentMethod('card')">
+          <div id="paymentCard" class="glass-light rounded-xl p-3 text-center border-2 border-transparent hover:border-indigo-500/50 transition-all">
+           <div class="text-2xl mb-1">
+            💳
+           </div>
+           <div class="text-xs font-medium">
+            Card
+           </div>
+           <div class="text-xs text-gray-500">
+            Credit/Debit
+           </div>
+          </div></label> <label class="payment-option cursor-pointer"> <input type="radio" name="paymentMethod" value="netbanking" class="hidden" onchange="selectPaymentMethod('netbanking')">
+          <div id="paymentNetbanking" class="glass-light rounded-xl p-3 text-center border-2 border-transparent hover:border-indigo-500/50 transition-all">
+           <div class="text-2xl mb-1">
+            🏦
+           </div>
+           <div class="text-xs font-medium">
+            Net Banking
+           </div>
+           <div class="text-xs text-gray-500">
+            All Banks
+           </div>
+          </div></label> <label class="payment-option cursor-pointer"> <input type="radio" name="paymentMethod" value="cash" class="hidden" onchange="selectPaymentMethod('cash')">
+          <div id="paymentCash" class="glass-light rounded-xl p-3 text-center border-2 border-transparent hover:border-indigo-500/50 transition-all">
+           <div class="text-2xl mb-1">
+            💵
+           </div>
+           <div class="text-xs font-medium">
+            Pay at Hospital
+           </div>
+           <div class="text-xs text-gray-500">
+            Cash/Card
+           </div>
+          </div></label>
+        </div>
+       </div><!-- UPI Details (shown when UPI selected) -->
+       <div id="upiDetails" class="hidden mb-3 fade-in-up"><label for="upiId" class="block text-xs font-medium text-gray-400 mb-1">UPI ID</label> <input type="text" id="upiId" placeholder="yourname@upi" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+        <p class="text-xs text-gray-500 mt-1">Example: 9876543210@paytm, name@oksbi</p>
+       </div><!-- Card Details (shown when Card selected) -->
+       <div id="cardDetails" class="hidden mb-3 fade-in-up space-y-2">
+        <p class="text-xs text-amber-400 bg-amber-500/10 p-2 rounded-lg">⚠️ Demo Mode: No real payment will be processed</p>
+        <div><label for="cardNumber" class="block text-xs font-medium text-gray-400 mb-1">Card Number</label> <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+         <div><label for="cardExpiry" class="block text-xs font-medium text-gray-400 mb-1">Expiry</label> <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+         </div>
+         <div><label for="cardCvv" class="block text-xs font-medium text-gray-400 mb-1">CVV</label> <input type="password" id="cardCvv" placeholder="***" maxlength="4" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm">
+         </div>
+        </div>
+       </div><!-- Net Banking (shown when Net Banking selected) -->
+       <div id="netbankingDetails" class="hidden mb-3 fade-in-up"><label for="bankSelect" class="block text-xs font-medium text-gray-400 mb-1">Select Bank</label> <select id="bankSelect" class="w-full px-3 py-2 glass-light rounded-lg focus:outline-none input-focus text-sm bg-transparent"> <option value="" class="bg-gray-900">-- Select Your Bank --</option> <option value="sbi" class="bg-gray-900">State Bank of India</option> <option value="hdfc" class="bg-gray-900">HDFC Bank</option> <option value="icici" class="bg-gray-900">ICICI Bank</option> <option value="axis" class="bg-gray-900">Axis Bank</option> <option value="kotak" class="bg-gray-900">Kotak Mahindra Bank</option> <option value="pnb" class="bg-gray-900">Punjab National Bank</option> <option value="bob" class="bg-gray-900">Bank of Baroda</option> <option value="canara" class="bg-gray-900">Canara Bank</option> <option value="union" class="bg-gray-900">Union Bank of India</option> <option value="andhra" class="bg-gray-900">Andhra Bank</option> </select>
+       </div><!-- Cash Payment Info -->
+       <div id="cashDetails" class="hidden mb-3 fade-in-up">
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3">
+         <div class="flex items-start gap-2"><span class="text-blue-400 text-lg">ℹ️</span>
+          <div>
+           <h4 class="font-semibold text-sm text-blue-400">Pay at Hospital</h4>
+           <p class="text-xs text-gray-400 mt-1">You can pay by Cash or Card at the hospital reception. Please arrive 15 minutes early to complete payment before your appointment.</p>
+          </div>
+         </div>
+        </div>
+       </div><!-- Payment Security Badge -->
+       <div class="flex items-center justify-center gap-2 text-xs text-gray-500 mb-3"><span>🔒</span> <span>Secure Payment</span> <span>•</span> <span>256-bit SSL</span> <span>•</span> <span>PCI DSS Compliant</span>
+       </div>
+      </div><button type="submit" id="submitBtn" class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl font-bold text-white hover:opacity-90 transition-all shimmer"> ✅ Confirm Booking &amp; Pay </button>
+     </form>
+    </div>
+   </div>
+  </div><!-- Success Modal with Email Confirmation -->
+  <div id="successModal" class="fixed inset-0 z-50 hidden">
+   <div class="modal-backdrop absolute inset-0" onclick="closeSuccessModal()"></div>
+   <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+    <div class="glass rounded-2xl p-6 m-4 text-center glow-box scale-in">
+     <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4"><span class="text-4xl">✅</span>
+     </div>
+     <h2 class="text-2xl font-bold text-green-400 mb-2">Booking Confirmed!</h2>
+     <p class="text-gray-400 mb-4 text-sm">Your appointment has been scheduled successfully.</p><!-- Email Notification Status -->
+     <div id="emailStatus" class="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl p-3 mb-4">
+      <div class="flex items-center justify-center gap-2"><span class="text-xl">📧</span>
+       <div class="text-left">
+        <h4 class="font-semibold text-sm text-blue-400">Email Notification Sent!</h4>
+        <p id="emailSentTo" class="text-xs text-gray-400">Confirmation sent to your email</p>
+       </div>
+      </div>
+     </div>
+     <div id="successDetails" class="glass-light rounded-xl p-3 text-left mb-4 text-xs"></div><button onclick="closeSuccessModal()" class="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-bold hover:opacity-90 transition-opacity">Done</button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // ==================== ANDHRA PRADESH HOSPITAL DATA ====================
+    const apHospitals = {
+      visakhapatnam: [
+        {
+          name: "KIMS Hospital Visakhapatnam",
+          address: "1-12-5, Waltair Main Road, Visakhapatnam",
+          totalRooms: 12, availableRooms: 9, rating: 4.8,
+          doctors: [
+            { id: "VZG001", name: "Dr. Ramesh Varma", specialty: "Cardiac Surgery", experience: "18 years", available: true, rating: 4.9, patients: 3500 },
+            { id: "VZG002", name: "Dr. Lakshmi Prasad", specialty: "Neurosurgery", experience: "15 years", available: true, rating: 4.7, patients: 2800 }
+          ]
+        },
+        {
+          name: "Apollo Hospital Vizag",
+          address: "Health City, Arilova, Visakhapatnam",
+          totalRooms: 15, availableRooms: 11, rating: 4.9,
+          doctors: [
+            { id: "VZG003", name: "Dr. Suresh Babu", specialty: "Orthopedic Surgery", experience: "20 years", available: true, rating: 4.8, patients: 4200 },
+            { id: "VZG004", name: "Dr. Padma Reddy", specialty: "General Surgery", experience: "12 years", available: true, rating: 4.6, patients: 2100 }
+          ]
+        }
+      ],
+      vijayawada: [
+        {
+          name: "Manipal Hospital Vijayawada",
+          address: "Tadepalli, Vijayawada",
+          totalRooms: 10, availableRooms: 7, rating: 4.7,
+          doctors: [
+            { id: "VJA001", name: "Dr. Krishna Mohan", specialty: "Cardiac Surgery", experience: "16 years", available: true, rating: 4.8, patients: 3100 },
+            { id: "VJA002", name: "Dr. Sita Devi", specialty: "Pediatrics", experience: "14 years", available: true, rating: 4.7, patients: 2600 }
+          ]
+        },
+        {
+          name: "Andhra Hospital Vijayawada",
+          address: "Governorpet, Vijayawada",
+          totalRooms: 8, availableRooms: 6, rating: 4.6,
+          doctors: [
+            { id: "VJA003", name: "Dr. Venkat Rao", specialty: "Neurosurgery", experience: "19 years", available: true, rating: 4.9, patients: 3800 }
+          ]
+        }
+      ],
+      guntur: [
+        {
+          name: "NRI Hospital Guntur",
+          address: "Mangalagiri Road, Guntur",
+          totalRooms: 9, availableRooms: 6, rating: 4.7,
+          doctors: [
+            { id: "GNT001", name: "Dr. Rajendra Prasad", specialty: "Cardiac Surgery", experience: "17 years", available: true, rating: 4.8, patients: 2900 },
+            { id: "GNT002", name: "Dr. Anuradha", specialty: "Gynecology", experience: "13 years", available: true, rating: 4.6, patients: 2200 }
+          ]
+        }
+      ],
+      tirupati: [
+        {
+          name: "SVIMS Tirupati",
+          address: "Alipiri Road, Tirupati",
+          totalRooms: 14, availableRooms: 10, rating: 4.8,
+          doctors: [
+            { id: "TPT001", name: "Dr. Govinda Raju", specialty: "Cardiac Surgery", experience: "22 years", available: true, rating: 4.9, patients: 5200 },
+            { id: "TPT002", name: "Dr. Venkateswari", specialty: "Neurosurgery", experience: "16 years", available: true, rating: 4.7, patients: 3100 }
+          ]
+        },
+        {
+          name: "Ruia Hospital Tirupati",
+          address: "Railway Station Road, Tirupati",
+          totalRooms: 7, availableRooms: 5, rating: 4.5,
+          doctors: [
+            { id: "TPT003", name: "Dr. Srinivas", specialty: "Orthopedic Surgery", experience: "14 years", available: true, rating: 4.6, patients: 2400 }
+          ]
+        }
+      ],
+      nellore: [
+        {
+          name: "Narayana Hospital Nellore",
+          address: "Grand Trunk Road, Nellore",
+          totalRooms: 8, availableRooms: 6, rating: 4.6,
+          doctors: [
+            { id: "NLR001", name: "Dr. Chandra Sekhar", specialty: "Cardiac Surgery", experience: "15 years", available: true, rating: 4.7, patients: 2700 },
+            { id: "NLR002", name: "Dr. Bhavani", specialty: "General Surgery", experience: "11 years", available: true, rating: 4.5, patients: 1900 }
+          ]
+        }
+      ],
+      kurnool: [
+        {
+          name: "KIMS Kurnool",
+          address: "Budhawarpet, Kurnool",
+          totalRooms: 7, availableRooms: 5, rating: 4.5,
+          doctors: [
+            { id: "KNL001", name: "Dr. Mallikarjun", specialty: "Orthopedic Surgery", experience: "16 years", available: true, rating: 4.6, patients: 2500 }
+          ]
+        }
+      ],
+      kakinada: [
+        {
+          name: "Surya Global Hospital Kakinada",
+          address: "Jawahar Street, Kakinada",
+          totalRooms: 8, availableRooms: 6, rating: 4.6,
+          doctors: [
+            { id: "KKD001", name: "Dr. Satya Narayana", specialty: "Cardiac Surgery", experience: "14 years", available: true, rating: 4.7, patients: 2300 },
+            { id: "KKD002", name: "Dr. Durga Prasad", specialty: "Neurosurgery", experience: "12 years", available: true, rating: 4.5, patients: 1800 }
+          ]
+        }
+      ],
+      rajahmundry: [
+        {
+          name: "GSL Hospital Rajahmundry",
+          address: "Lakshmi Puram, Rajahmundry",
+          totalRooms: 9, availableRooms: 7, rating: 4.7,
+          doctors: [
+            { id: "RJY001", name: "Dr. Seshagiri Rao", specialty: "General Surgery", experience: "18 years", available: true, rating: 4.8, patients: 3200 },
+            { id: "RJY002", name: "Dr. Hymavathi", specialty: "Pediatrics", experience: "13 years", available: true, rating: 4.6, patients: 2100 }
+          ]
+        }
+      ],
+      anantapur: [
+        {
+          name: "RIMS Anantapur",
+          address: "Medical College Road, Anantapur",
+          totalRooms: 8, availableRooms: 5, rating: 4.5,
+          doctors: [
+            { id: "ATP001", name: "Dr. Nagaraju", specialty: "Orthopedic Surgery", experience: "15 years", available: true, rating: 4.6, patients: 2400 }
+          ]
+        }
+      ],
+      kadapa: [
+        {
+          name: "RIMS Kadapa",
+          address: "Rajiv Gandhi Institute, Kadapa",
+          totalRooms: 7, availableRooms: 5, rating: 4.4,
+          doctors: [
+            { id: "KDP001", name: "Dr. Obul Reddy", specialty: "General Surgery", experience: "14 years", available: true, rating: 4.5, patients: 2000 }
+          ]
+        }
+      ],
+      ongole: [
+        {
+          name: "Lalitha Super Specialty Hospital",
+          address: "Trunk Road, Ongole",
+          totalRooms: 6, availableRooms: 4, rating: 4.5,
+          doctors: [
+            { id: "OGL001", name: "Dr. Ramana Murthy", specialty: "Cardiac Surgery", experience: "13 years", available: true, rating: 4.6, patients: 2100 }
+          ]
+        }
+      ],
+      eluru: [
+        {
+          name: "Eluru Government Hospital",
+          address: "Powerpet, Eluru",
+          totalRooms: 7, availableRooms: 5, rating: 4.3,
+          doctors: [
+            { id: "ELR001", name: "Dr. Subba Rao", specialty: "General Surgery", experience: "16 years", available: true, rating: 4.5, patients: 2300 }
+          ]
+        }
+      ],
+      srikakulam: [
+        {
+          name: "RIMS Srikakulam",
+          address: "Balaga, Srikakulam",
+          totalRooms: 6, availableRooms: 4, rating: 4.4,
+          doctors: [
+            { id: "SKM001", name: "Dr. Jagannath", specialty: "Orthopedic Surgery", experience: "12 years", available: true, rating: 4.5, patients: 1800 }
+          ]
+        }
+      ],
+      vizianagaram: [
+        {
+          name: "Vizianagaram Government Hospital",
+          address: "Fort Area, Vizianagaram",
+          totalRooms: 5, availableRooms: 3, rating: 4.3,
+          doctors: [
+            { id: "VZN001", name: "Dr. Apparao", specialty: "General Surgery", experience: "14 years", available: true, rating: 4.4, patients: 1600 }
+          ]
+        }
+      ],
+      chittoor: [
+        {
+          name: "SVRRGG Hospital Chittoor",
+          address: "Thotapalyam, Chittoor",
+          totalRooms: 8, availableRooms: 6, rating: 4.5,
+          doctors: [
+            { id: "CTR001", name: "Dr. Ranganath", specialty: "Cardiac Surgery", experience: "17 years", available: true, rating: 4.7, patients: 2800 }
+          ]
+        }
+      ],
+      krishna: [
+        {
+          name: "Government General Hospital Machilipatnam",
+          address: "Bandar Road, Machilipatnam",
+          totalRooms: 6, availableRooms: 4, rating: 4.4,
+          doctors: [
+            { id: "KSN001", name: "Dr. Bhaskara Rao", specialty: "General Surgery", experience: "15 years", available: true, rating: 4.5, patients: 2100 }
+          ]
+        }
+      ],
+      prakasam: [
+        {
+          name: "GGH Ongole",
+          address: "Kurnool Road, Ongole",
+          totalRooms: 7, availableRooms: 5, rating: 4.4,
+          doctors: [
+            { id: "PKM001", name: "Dr. Venkata Rao", specialty: "Orthopedic Surgery", experience: "13 years", available: true, rating: 4.5, patients: 1900 }
+          ]
+        }
+      ],
+      westgodavari: [
+        {
+          name: "GGH Eluru",
+          address: "RR Pet, Eluru",
+          totalRooms: 8, availableRooms: 6, rating: 4.5,
+          doctors: [
+            { id: "WGD001", name: "Dr. Veerabhadra Rao", specialty: "Neurosurgery", experience: "14 years", available: true, rating: 4.6, patients: 2200 }
+          ]
+        }
+      ],
+      eastgodavari: [
+        {
+          name: "GGH Kakinada",
+          address: "Main Road, Kakinada",
+          totalRooms: 10, availableRooms: 7, rating: 4.6,
+          doctors: [
+            { id: "EGD001", name: "Dr. Siva Prasad", specialty: "Cardiac Surgery", experience: "16 years", available: true, rating: 4.7, patients: 2700 }
+          ]
+        }
+      ]
+    };
+    
+    const apDistricts = [
+      'visakhapatnam', 'vijayawada', 'guntur', 'tirupati', 'nellore', 'kurnool',
+      'kakinada', 'rajahmundry', 'anantapur', 'kadapa', 'ongole', 'eluru',
+      'srikakulam', 'vizianagaram', 'chittoor', 'krishna', 'prakasam', 'westgodavari', 'eastgodavari'
+    ];
+    
+    // ==================== STATE ====================
+    let users = [];
+    let appointments = [];
+    let currentUser = null;
+    let selectedDoctor = null;
+    let selectedHospital = null;
+    let selectedTimeSlot = null;
+    let selectedDistrict = 'all';
+    let selectedLivePatient = null;
+    let liveUpdateInterval = null;
+    let isChatOpen = false;
+    
+    // Voice
+    let recognition = null;
+    let isListening = false;
+    let synthesis = window.speechSynthesis;
+    let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    // ==================== CONFIG ====================
+    const defaultConfig = {
+      main_title: 'Quantum Healthcare',
+      welcome_message: 'Andhra Pradesh Healthcare Network'
+    };
+    
+    // ==================== DATA SDK HANDLER ====================
+    const dataHandler = {
+      onDataChanged(data) {
+        users = data.filter(d => d.type === 'user');
+        appointments = data.filter(d => d.type === 'appointment');
+        
+        if (currentUser) {
+          updateDashboard();
+          renderAppointments();
+          updateLivePatientSelect();
+          updateNotificationBadge();
+        }
+      }
+    };
+    
+    // ==================== INITIALIZATION ====================
+    async function init() {
+      createParticles();
+      populateDistrictSelect();
+      updateDateTime();
+      setInterval(updateDateTime, 60000);
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) console.error('Data SDK init failed');
+      }
+      
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('mainTitle').textContent = config.main_title || defaultConfig.main_title;
+            document.getElementById('welcomeMessage').textContent = config.welcome_message || defaultConfig.welcome_message;
+          },
+          mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }),
+          mapToEditPanelValues: (config) => new Map([
+            ['main_title', config.main_title || defaultConfig.main_title],
+            ['welcome_message', config.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+      }
+      
+      if (SpeechRecognition) {
+        initVoiceRecognition();
+      } else {
+        document.getElementById('browserSupportNotice')?.classList.remove('hidden');
+      }
+    }
+    
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      const el = document.getElementById('currentDateTime');
+      if (el) el.textContent = now.toLocaleDateString('en-IN', options);
+    }
+    
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 25; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 25 + 's';
+        particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+        container.appendChild(particle);
+      }
+    }
+    
+    function populateDistrictSelect() {
+      const select = document.getElementById('districtSelect');
+      if (!select) return;
+      
+      apDistricts.forEach(d => {
+        const option = document.createElement('option');
+        option.value = d;
+        option.textContent = d.charAt(0).toUpperCase() + d.slice(1);
+        option.className = 'bg-gray-900';
+        select.appendChild(option);
+      });
+    }
+    
+    function updateNotificationBadge() {
+      const myAppts = appointments.filter(a => a.patient_email === currentUser?.email || a.patient_phone === currentUser?.phone);
+      const badge = document.getElementById('notificationBadge');
+      if (badge) {
+        if (myAppts.length > 0) {
+          badge.classList.remove('hidden');
+          badge.textContent = myAppts.length;
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+    
+    // ==================== AUTH ====================
+    function showSignUp() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('signUpForm').classList.remove('hidden');
+      document.getElementById('loginError').classList.add('hidden');
+    }
+    
+    function showLogin() {
+      document.getElementById('signUpForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('signupError').classList.add('hidden');
+    }
+    
+    async function handleSignUp(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+      
+      const errorEl = document.getElementById('signupError');
+      
+      if (password !== confirmPassword) {
+        errorEl.textContent = 'Passwords do not match';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      
+      const existingUser = users.find(u => u.email === email);
+      if (existingUser) {
+        errorEl.textContent = 'Email already registered. Please sign in.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      
+      if (users.length >= 999) {
+        errorEl.textContent = 'Maximum users reached. Please try later.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      
+      const btn = document.getElementById('signupBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Creating...';
+      
+      const result = await window.dataSdk.create({
+        type: 'user',
+        email: email,
+        password: password,
+        full_name: name,
+        phone: phone,
+        created_at: new Date().toISOString()
+      });
+      
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+      
+      if (result.isOk) {
+        showToast('Account created! Please sign in.', 'success');
+        showLogin();
+        document.getElementById('loginEmail').value = email;
+      } else {
+        errorEl.textContent = 'Failed to create account. Try again.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+    
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (!user) {
+        errorEl.textContent = 'Invalid email or password';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      
+      currentUser = user;
+      
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      
+      document.getElementById('userNameDisplay').textContent = user.full_name.split(' ')[0];
+      document.getElementById('userAvatar').textContent = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      
+      loadHospitals();
+      updateDashboard();
+      renderAppointments();
+      updateNotificationBadge();
+      
+      showToast(`Welcome back, ${user.full_name.split(' ')[0]}!`, 'success');
+    }
+    
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('loginForm').reset();
+      showToast('Logged out successfully', 'info');
+    }
+    
+    // ==================== TOAST ====================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+      const colors = {
+        success: 'from-green-500/90 to-emerald-500/90',
+        error: 'from-red-500/90 to-rose-500/90',
+        info: 'from-blue-500/90 to-indigo-500/90',
+        warning: 'from-yellow-500/90 to-amber-500/90'
+      };
+      
+      toast.className = `toast glass px-4 py-2 rounded-xl flex items-center gap-2 bg-gradient-to-r ${colors[type]}`;
+      toast.innerHTML = `<span>${icons[type]}</span><span class="text-sm">${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    
+    // ==================== NAVIGATION ====================
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      
+      document.getElementById(pageId)?.classList.remove('hidden');
+      event?.target?.classList.add('active');
+      
+      if (pageId === 'liveTracking') updateLivePatientSelect();
+    }
+    
+    function setDistrictFromDashboard(district) {
+      selectedDistrict = district;
+      document.getElementById('districtSelect').value = district;
+      showPage('hospitals');
+      document.querySelectorAll('.nav-link')[1]?.classList.add('active');
+      loadHospitals();
+    }
+    
+    // ==================== DASHBOARD ====================
+    function updateDashboard() {
+      const today = new Date().toISOString().split('T')[0];
+      const myAppointments = appointments.filter(a => a.patient_email === currentUser?.email || a.patient_phone === currentUser?.phone);
+      const todayAppts = myAppointments.filter(a => a.preferred_date === today);
+      const activeAppts = myAppointments.filter(a => ['preop', 'surgery', 'recovery'].includes(a.stage));
+      const upcomingAppts = myAppointments.filter(a => a.preferred_date >= today && a.stage === 'scheduled').slice(0, 3);
+      
+      document.getElementById('todayAppointments').textContent = todayAppts.length;
+      document.getElementById('activePatients').textContent = activeAppts.length;
+      
+      // Update progress bars
+      const appointmentProgress = document.getElementById('appointmentProgress');
+      const activeProgress = document.getElementById('activeProgress');
+      if (appointmentProgress) appointmentProgress.style.width = Math.min(todayAppts.length * 20, 100) + '%';
+      if (activeProgress) activeProgress.style.width = Math.min(activeAppts.length * 25, 100) + '%';
+      
+      // Upcoming Appointments
+      const upcomingContainer = document.getElementById('upcomingAppointments');
+      if (upcomingAppts.length === 0) {
+        upcomingContainer.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <div class="text-4xl mb-2 floating-icon">📋</div>
+            <p class="text-sm font-medium">No upcoming appointments</p>
+            <p class="text-xs text-gray-600 mt-1">Book your first appointment today!</p>
+            <button onclick="showPage('hospitals')" class="mt-3 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Book Now</button>
+          </div>
+        `;
+      } else {
+        upcomingContainer.innerHTML = upcomingAppts.map(apt => `
+          <div class="upcoming-card rounded-xl p-3 hover-lift">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500/30 to-purple-500/30 flex items-center justify-center text-lg">📅</div>
+                <div>
+                  <div class="font-bold text-sm">${apt.doctor_name}</div>
+                  <div class="text-xs text-gray-400">${apt.surgery_type}</div>
+                  <div class="text-xs text-indigo-400 mt-1">${formatDate(apt.preferred_date)} at ${apt.time_slot}</div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-xs status-${apt.stage}">${apt.status}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      // Activity Timeline
+      const activityContainer = document.getElementById('activityTimeline');
+      if (myAppointments.length === 0) {
+        activityContainer.innerHTML = '<div class="text-center py-6 text-gray-500"><p class="text-sm">No recent activity</p></div>';
+      } else {
+        const recent = myAppointments.slice(-5).reverse();
+        activityContainer.innerHTML = recent.map((apt, i) => `
+          <div class="activity-line fade-in-up" style="animation-delay: ${i * 0.1}s;">
+            <div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+              <div class="w-2 h-2 rounded-full bg-white"></div>
+            </div>
+            <div class="glass-light rounded-lg p-2 hover-lift">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-indigo-400">${apt.status}</div>
+                  <div class="text-xs text-gray-400">${apt.doctor_name}</div>
+                </div>
+                <div class="text-xs text-gray-500">${formatDate(apt.preferred_date)}</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+    
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    }
+    
+    // ==================== HOSPITALS ====================
+    function setDistrict(district) {
+      selectedDistrict = district;
+      document.getElementById('districtSelect').value = district;
+      document.querySelectorAll('.district-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-500/30', 'text-indigo-300');
+        btn.classList.add('glass-light');
+      });
+      event?.target?.classList.remove('glass-light');
+      event?.target?.classList.add('bg-indigo-500/30', 'text-indigo-300');
+      loadHospitals();
+    }
+    
+    function loadHospitals() {
+      const district = document.getElementById('districtSelect')?.value || selectedDistrict;
+      let hospitals = [];
+      
+      if (district === 'all') {
+        Object.keys(apHospitals).forEach(d => {
+          apHospitals[d].forEach(h => hospitals.push({ ...h, district: d }));
+        });
+      } else {
+        hospitals = (apHospitals[district] || []).map(h => ({ ...h, district }));
+      }
+      
+      const container = document.getElementById('hospitalsList');
+      if (!container) return;
+      
+      if (hospitals.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-gray-500"><div class="text-4xl mb-2">🏥</div><p>No hospitals found in this district</p></div>`;
+        return;
+      }
+      
+      container.innerHTML = hospitals.map((hospital, hIndex) => `
+        <div class="glass-light rounded-xl p-4 fade-in-up hover-lift" style="animation-delay: ${hIndex * 0.05}s;">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
+            <div>
+              <h3 class="font-bold text-indigo-300">${hospital.name}</h3>
+              <p class="text-gray-500 text-xs">📍 ${hospital.address}</p>
+              <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs bg-purple-500/20 text-purple-300">${hospital.district.charAt(0).toUpperCase() + hospital.district.slice(1)}</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2 md:mt-0">
+              <div class="text-center">
+                <div class="text-sm font-bold text-green-400">${hospital.availableRooms}/${hospital.totalRooms}</div>
+                <div class="text-xs text-gray-500">ORs</div>
+              </div>
+              <div class="text-center">
+                <div class="text-sm font-bold text-yellow-400">⭐ ${hospital.rating}</div>
+                <div class="text-xs text-gray-500">Rating</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid md:grid-cols-2 gap-3">
+            ${hospital.doctors.map(doctor => `
+              <div class="glass rounded-lg p-3 hover-lift ${doctor.available ? '' : 'opacity-50'}">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                    ${doctor.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-xs ${doctor.available ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                    ${doctor.available ? '✅' : '❌'}
+                  </span>
+                </div>
+                <h4 class="font-bold text-sm">${doctor.name}</h4>
+                <p class="text-xs text-purple-400 mb-1">${doctor.specialty}</p>
+                <div class="text-xs text-gray-500 mb-2">🎓 ${doctor.experience} • ⭐ ${doctor.rating}</div>
+                <button 
+                  onclick="openAppointmentModal('${hospital.district}', '${hospital.name}', '${doctor.id}')"
+                  ${doctor.available ? '' : 'disabled'}
+                  class="w-full py-1.5 px-3 rounded-lg font-medium text-xs transition-all ${doctor.available 
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90' 
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'}"
+                >📅 Book</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // ==================== APPOINTMENTS ====================
+    function openAppointmentModal(district, hospitalName, doctorId) {
+      const hospitals = apHospitals[district] || [];
+      const hospital = hospitals.find(h => h.name === hospitalName);
+      if (!hospital) return;
+      
+      const doctor = hospital.doctors.find(d => d.id === doctorId);
+      if (!doctor || !doctor.available) return;
+      
+      selectedHospital = { ...hospital, district };
+      selectedDoctor = doctor;
+      selectedTimeSlot = null;
+      
+      document.getElementById('appointmentDoctorInfo').innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
+            ${doctor.name.split(' ').map(n => n[0]).join('')}
+          </div>
+          <div>
+            <h3 class="font-bold text-sm">${doctor.name}</h3>
+            <p class="text-xs text-purple-300">${doctor.specialty}</p>
+            <p class="text-xs text-gray-400">${hospital.name}</p>
+          </div>
+        </div>
+      `;
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('preferredDate').min = today;
+      document.getElementById('preferredDate').value = today;
+      
+      if (currentUser) {
+        document.getElementById('patientName').value = currentUser.full_name || '';
+        document.getElementById('patientPhone').value = currentUser.phone || '';
+        document.getElementById('patientEmail').value = currentUser.email || '';
+      }
+      
+      generateTimeSlots();
+      document.getElementById('appointmentModal').classList.remove('hidden');
+    }
+    
+    function closeAppointmentModal() {
+      document.getElementById('appointmentModal').classList.add('hidden');
+      document.getElementById('appointmentForm').reset();
+      selectedPaymentMethod = null;
+      
+      // Reset payment UI
+      ['Upi', 'Card', 'Netbanking', 'Cash'].forEach(m => {
+        const el = document.getElementById('payment' + m);
+        if (el) {
+          el.classList.remove('border-indigo-500', 'bg-indigo-500/20');
+          el.classList.add('border-transparent');
+        }
+      });
+      
+      document.getElementById('upiDetails')?.classList.add('hidden');
+      document.getElementById('cardDetails')?.classList.add('hidden');
+      document.getElementById('netbankingDetails')?.classList.add('hidden');
+      document.getElementById('cashDetails')?.classList.add('hidden');
+      
+      // Reset fees display
+      document.getElementById('consultationFee').textContent = '₹500';
+      document.getElementById('gstAmount').textContent = '₹99';
+      document.getElementById('totalAmount').textContent = '₹649';
+    }
+    
+    function generateTimeSlots() {
+      const slots = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+      const container = document.getElementById('timeSlots');
+      const selectedDate = document.getElementById('preferredDate').value;
+      
+      const bookedSlots = appointments
+        .filter(a => a.doctor_id === selectedDoctor?.id && a.preferred_date === selectedDate)
+        .map(a => a.time_slot);
+      
+      container.innerHTML = slots.map(slot => {
+        const isBooked = bookedSlots.includes(slot);
+        const hour = parseInt(slot);
+        const display = hour >= 12 ? `${hour === 12 ? 12 : hour - 12}${hour >= 12 ? 'PM' : 'AM'}` : `${hour}AM`;
+        return `
+          <div 
+            onclick="${isBooked ? '' : `selectTimeSlot('${slot}')`}"
+            class="time-slot p-2 rounded-lg text-center font-medium cursor-pointer border border-indigo-500/30 text-xs ${isBooked ? 'booked' : ''}"
+            data-slot="${slot}"
+          >${display}</div>
+        `;
+      }).join('');
+    }
+    
+    function selectTimeSlot(slot) {
+      document.querySelectorAll('.time-slot').forEach(el => el.classList.remove('selected'));
+      document.querySelector(`[data-slot="${slot}"]`)?.classList.add('selected');
+      selectedTimeSlot = slot;
+    }
+    
+    // Payment related variables
+    let selectedPaymentMethod = null;
+    
+    function selectPaymentMethod(method) {
+      selectedPaymentMethod = method;
+      
+      // Reset all payment option styles
+      ['Upi', 'Card', 'Netbanking', 'Cash'].forEach(m => {
+        const el = document.getElementById('payment' + m);
+        if (el) {
+          el.classList.remove('border-indigo-500', 'bg-indigo-500/20');
+          el.classList.add('border-transparent');
+        }
+      });
+      
+      // Highlight selected option
+      const selectedEl = document.getElementById('payment' + method.charAt(0).toUpperCase() + method.slice(1));
+      if (selectedEl) {
+        selectedEl.classList.remove('border-transparent');
+        selectedEl.classList.add('border-indigo-500', 'bg-indigo-500/20');
+      }
+      
+      // Hide all detail sections
+      document.getElementById('upiDetails')?.classList.add('hidden');
+      document.getElementById('cardDetails')?.classList.add('hidden');
+      document.getElementById('netbankingDetails')?.classList.add('hidden');
+      document.getElementById('cashDetails')?.classList.add('hidden');
+      
+      // Show relevant detail section
+      if (method === 'upi') {
+        document.getElementById('upiDetails')?.classList.remove('hidden');
+      } else if (method === 'card') {
+        document.getElementById('cardDetails')?.classList.remove('hidden');
+      } else if (method === 'netbanking') {
+        document.getElementById('netbankingDetails')?.classList.remove('hidden');
+      } else if (method === 'cash') {
+        document.getElementById('cashDetails')?.classList.remove('hidden');
+      }
+      
+      // Update button text
+      const btn = document.getElementById('submitBtn');
+      if (method === 'cash') {
+        btn.textContent = '✅ Confirm Booking (Pay at Hospital)';
+      } else {
+        btn.textContent = '✅ Confirm Booking & Pay';
+      }
+    }
+    
+    function calculateFees() {
+      const surgeryType = document.getElementById('surgeryType')?.value;
+      const priority = document.getElementById('priority')?.value;
+      
+      // Base consultation fees by procedure type
+      const baseFees = {
+        'consultation': 500,
+        'cardiac': 2000,
+        'neuro': 1800,
+        'orthopedic': 1500,
+        'general': 800,
+        'pediatric': 600
+      };
+      
+      let consultationFee = baseFees[surgeryType] || 500;
+      
+      // Priority surcharges
+      if (priority === 'urgent') {
+        consultationFee = Math.round(consultationFee * 1.25);
+      } else if (priority === 'emergency') {
+        consultationFee = Math.round(consultationFee * 1.5);
+      }
+      
+      const bookingCharge = 50;
+      const subtotal = consultationFee + bookingCharge;
+      const gst = Math.round(subtotal * 0.18);
+      const total = subtotal + gst;
+      
+      // Update UI
+      document.getElementById('consultationFee').textContent = '₹' + consultationFee.toLocaleString('en-IN');
+      document.getElementById('gstAmount').textContent = '₹' + gst.toLocaleString('en-IN');
+      document.getElementById('totalAmount').textContent = '₹' + total.toLocaleString('en-IN');
+      
+      return { consultationFee, bookingCharge, gst, total };
+    }
+    
+    async function requestMicrophoneAccess() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+        
+        document.getElementById('micPermissionStatus')?.classList.add('hidden');
+        document.getElementById('micPermissionGranted')?.classList.remove('hidden');
+        
+        showToast('Microphone access granted!', 'success');
+        initVoiceRecognition();
+      } catch (err) {
+        console.error('Microphone permission denied:', err);
+        showToast('Microphone access denied. Please enable in browser settings.', 'error');
+      }
+    }
+    
+    // ==================== EMAIL NOTIFICATION ====================
+    function sendEmailNotification(appointmentData) {
+      // Create email content
+      const emailContent = {
+        to: appointmentData.patient_email,
+        subject: `Appointment Confirmed - ${appointmentData.hospital_name}`,
+        body: `
+Dear ${appointmentData.patient_name},
+
+Your appointment has been successfully booked!
+
+📅 APPOINTMENT DETAILS
+━━━━━━━━━━━━━━━━━━━━━
+🏥 Hospital: ${appointmentData.hospital_name}
+👨‍⚕️ Doctor: ${appointmentData.doctor_name}
+📋 Specialty: ${appointmentData.doctor_specialty}
+📆 Date: ${appointmentData.preferred_date}
+⏰ Time: ${appointmentData.time_slot}
+🔖 Priority: ${appointmentData.priority}
+📝 Procedure: ${appointmentData.surgery_type}
+
+📍 LOCATION
+━━━━━━━━━━━━━━━━━━━━━
+District: ${appointmentData.district.charAt(0).toUpperCase() + appointmentData.district.slice(1)}, Andhra Pradesh
+
+📞 PATIENT INFORMATION
+━━━━━━━━━━━━━━━━━━━━━
+Name: ${appointmentData.patient_name}
+Age: ${appointmentData.patient_age} years
+Phone: ${appointmentData.patient_phone}
+Email: ${appointmentData.patient_email}
+
+⚠️ IMPORTANT REMINDERS
+━━━━━━━━━━━━━━━━━━━━━
+• Please arrive 15 minutes before your appointment
+• Bring all relevant medical records
+• Carry a valid ID proof
+• For cancellation, please contact us 24 hours in advance
+
+Thank you for choosing Quantum Healthcare AP!
+We wish you good health.
+
+Best regards,
+Quantum Healthcare Team
+Andhra Pradesh Healthcare Network
+📞 Emergency: 1800-XXX-XXXX
+🌐 www.quantumhealthcare.ap
+        `
+      };
+      
+      // Simulate email sending (in production, this would call an email API)
+      console.log('📧 Email Notification:', emailContent);
+      
+      // Create mailto link as fallback/demo
+      const mailtoLink = `mailto:${emailContent.to}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
+      
+      // Store the mailto link for potential use
+      return { success: true, mailtoLink, content: emailContent };
+    }
+    
+    async function submitAppointment(e) {
+      e.preventDefault();
+      
+      if (!selectedTimeSlot) {
+        showToast('Please select a time slot', 'warning');
+        return;
+      }
+      
+      const patientEmail = document.getElementById('patientEmail').value;
+      if (!patientEmail) {
+        showToast('Email is required for notification', 'warning');
+        return;
+      }
+      
+      if (!selectedPaymentMethod) {
+        showToast('Please select a payment method', 'warning');
+        return;
+      }
+      
+      // Validate payment details based on method
+      if (selectedPaymentMethod === 'upi') {
+        const upiId = document.getElementById('upiId').value.trim();
+        if (!upiId || !upiId.includes('@')) {
+          showToast('Please enter a valid UPI ID', 'warning');
+          return;
+        }
+      } else if (selectedPaymentMethod === 'card') {
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const cardExpiry = document.getElementById('cardExpiry').value;
+        const cardCvv = document.getElementById('cardCvv').value;
+        
+        if (cardNumber.length < 13) {
+          showToast('Please enter a valid card number', 'warning');
+          return;
+        }
+        if (!cardExpiry || cardExpiry.length < 5) {
+          showToast('Please enter card expiry date', 'warning');
+          return;
+        }
+        if (!cardCvv || cardCvv.length < 3) {
+          showToast('Please enter CVV', 'warning');
+          return;
+        }
+      } else if (selectedPaymentMethod === 'netbanking') {
+        const bank = document.getElementById('bankSelect').value;
+        if (!bank) {
+          showToast('Please select your bank', 'warning');
+          return;
+        }
+      }
+      
+      if (appointments.length >= 999) {
+        showToast('Maximum appointments reached', 'error');
+        return;
+      }
+      
+      // Calculate final fees
+      const fees = calculateFees();
+      
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Booking & Sending Email...';
+      
+      const data = {
+        type: 'appointment',
+        patient_name: document.getElementById('patientName').value,
+        patient_age: parseInt(document.getElementById('patientAge').value),
+        patient_phone: document.getElementById('patientPhone').value,
+        patient_email: patientEmail,
+        surgery_type: document.getElementById('surgeryType').value,
+        preferred_date: document.getElementById('preferredDate').value,
+        time_slot: selectedTimeSlot,
+        priority: document.getElementById('priority').value,
+        doctor_id: selectedDoctor.id,
+        doctor_name: selectedDoctor.name,
+        doctor_specialty: selectedDoctor.specialty,
+        hospital_name: selectedHospital.name,
+        district: selectedHospital.district,
+        location: 'andhra_pradesh',
+        status: 'Scheduled',
+        stage: 'scheduled',
+        notification_sent: true,
+        payment_method: selectedPaymentMethod,
+        payment_status: selectedPaymentMethod === 'cash' ? 'pending' : 'paid',
+        amount_paid: fees.total,
+        created_at: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(data);
+      
+      btn.disabled = false;
+      btn.textContent = '✅ Confirm Booking & Send Email';
+      
+      if (result.isOk) {
+        // Send email notification
+        const emailResult = sendEmailNotification(data);
+        
+        closeAppointmentModal();
+        
+        // Update success modal with email info
+        document.getElementById('emailSentTo').textContent = `Confirmation sent to ${patientEmail}`;
+        
+        const paymentMethodLabels = { upi: 'UPI', card: 'Card', netbanking: 'Net Banking', cash: 'Pay at Hospital' };
+        document.getElementById('successDetails').innerHTML = `
+          <div class="space-y-2 text-gray-300">
+            <div class="flex justify-between items-center"><span class="text-gray-500">Patient:</span><span class="font-medium">${data.patient_name}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">Doctor:</span><span class="font-medium">${data.doctor_name}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">Date:</span><span class="font-medium">${data.preferred_date}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">Time:</span><span class="font-medium">${data.time_slot}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">Hospital:</span><span class="font-medium">${data.hospital_name}</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-500">District:</span><span class="font-medium">${data.district.charAt(0).toUpperCase() + data.district.slice(1)}</span></div>
+            <div class="border-t border-indigo-500/20 pt-2 mt-2">
+              <div class="flex justify-between items-center"><span class="text-gray-500">Payment:</span><span class="font-medium">${paymentMethodLabels[data.payment_method]}</span></div>
+              <div class="flex justify-between items-center"><span class="text-gray-500">Amount:</span><span class="font-bold text-green-400">₹${data.amount_paid.toLocaleString('en-IN')}</span></div>
+              <div class="flex justify-between items-center"><span class="text-gray-500">Status:</span><span class="font-medium ${data.payment_status === 'paid' ? 'text-green-400' : 'text-yellow-400'}">${data.payment_status === 'paid' ? '✅ Paid' : '⏳ Pay at Hospital'}</span></div>
+            </div>
+          </div>
+        `;
+        document.getElementById('successModal').classList.remove('hidden');
+        showToast('Appointment booked! Email sent!', 'success');
+      } else {
+        showToast('Booking failed. Try again.', 'error');
+      }
+    }
+    
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.add('hidden');
+    }
+    
+    function renderAppointments() {
+      const container = document.getElementById('appointmentsList');
+      if (!container) return;
+      
+      const filter = document.getElementById('filterStatus')?.value || 'all';
+      const myAppts = appointments.filter(a => a.patient_email === currentUser?.email || a.patient_phone === currentUser?.phone);
+      const filtered = filter === 'all' ? myAppts : myAppts.filter(a => a.stage === filter);
+      
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <div class="text-4xl mb-2">📋</div>
+            <p class="text-sm">No appointments found</p>
+            <button onclick="showPage('hospitals')" class="mt-3 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg font-medium text-sm hover:opacity-90">Book Now</button>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = filtered.map((apt, i) => `
+        <div class="glass-light rounded-lg p-3 hover-lift fade-in-up" style="animation-delay: ${i * 0.03}s;">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+            <div class="flex items-center gap-3">
+              <div class="text-center">
+                <div class="font-bold text-indigo-400 text-sm">${apt.time_slot}</div>
+                <div class="text-xs text-gray-500">${apt.preferred_date}</div>
+              </div>
+              <div class="border-l border-indigo-500/30 pl-3">
+                <div class="font-bold text-sm">${apt.patient_name}</div>
+                <div class="text-xs text-gray-400">${apt.surgery_type}</div>
+                <div class="text-xs text-purple-400">${apt.doctor_name}</div>
+                <div class="text-xs text-gray-500">${apt.hospital_name}</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              ${apt.notification_sent ? '<span class="text-xs text-green-400">📧</span>' : ''}
+              ${apt.amount_paid ? `<span class="text-xs font-medium ${apt.payment_status === 'paid' ? 'text-green-400' : 'text-yellow-400'}">₹${apt.amount_paid?.toLocaleString('en-IN') || '0'} ${apt.payment_status === 'paid' ? '✅' : '⏳'}</span>` : ''}
+              <span class="px-2 py-0.5 rounded-full text-xs status-${apt.stage}">${apt.status}</span>
+              <span class="px-2 py-0.5 rounded-full text-xs bg-indigo-500/20 text-indigo-300">${apt.priority}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function filterAppointments() { renderAppointments(); }
+    
+    // ==================== LIVE TRACKING ====================
+    function updateLivePatientSelect() {
+      const select = document.getElementById('livePatientSelect');
+      if (!select) return;
+      
+      const myAppts = appointments.filter(a => 
+        (a.patient_email === currentUser?.email || a.patient_phone === currentUser?.phone) &&
+        ['preop', 'surgery', 'recovery'].includes(a.stage)
+      );
+      
+      select.innerHTML = '<option value="">-- Select Patient --</option>' +
+        myAppts.map(a => `<option value="${a.__backendId}">${a.patient_name} - ${a.status}</option>`).join('');
+    }
+    
+    function selectLivePatient() {
+      const id = document.getElementById('livePatientSelect').value;
+      
+      if (!id) {
+        document.getElementById('liveStatusPanel')?.classList.add('hidden');
+        document.getElementById('noPatientSelected')?.classList.remove('hidden');
+        if (liveUpdateInterval) clearInterval(liveUpdateInterval);
+        return;
+      }
+      
+      selectedLivePatient = appointments.find(a => a.__backendId === id);
+      document.getElementById('liveStatusPanel')?.classList.remove('hidden');
+      document.getElementById('noPatientSelected')?.classList.add('hidden');
+      
+      updateLiveTracking();
+      if (liveUpdateInterval) clearInterval(liveUpdateInterval);
+      liveUpdateInterval = setInterval(updateLiveTracking, 5000);
+    }
+    
+    function updateLiveTracking() {
+      if (!selectedLivePatient) return;
+      
+      const now = new Date();
+      document.getElementById('lastUpdateTime').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      
+      document.getElementById('livePatientInfo').innerHTML = `
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold">${selectedLivePatient.patient_name}</h3>
+            <p class="text-xs text-indigo-200">Age: ${selectedLivePatient.patient_age} • ${selectedLivePatient.surgery_type}</p>
+          </div>
+          <span class="px-2 py-1 rounded-full text-xs status-${selectedLivePatient.stage}">${selectedLivePatient.status}</span>
+        </div>
+      `;
+      
+      const vitals = {
+        hr: Math.floor(70 + Math.random() * 20),
+        bp: `${Math.floor(110 + Math.random() * 20)}/${Math.floor(70 + Math.random() * 15)}`,
+        spo2: Math.floor(96 + Math.random() * 4),
+        temp: (36.5 + Math.random()).toFixed(1),
+        rr: Math.floor(14 + Math.random() * 6)
+      };
+      
+      document.getElementById('vitalsGrid').innerHTML = `
+        <div class="glass rounded-lg p-2 text-center"><div class="text-lg font-bold text-red-400">${vitals.hr}</div><div class="text-xs text-gray-500">HR</div></div>
+        <div class="glass rounded-lg p-2 text-center"><div class="text-lg font-bold text-blue-400">${vitals.bp}</div><div class="text-xs text-gray-500">BP</div></div>
+        <div class="glass rounded-lg p-2 text-center"><div class="text-lg font-bold text-green-400">${vitals.spo2}%</div><div class="text-xs text-gray-500">SpO2</div></div>
+        <div class="glass rounded-lg p-2 text-center"><div class="text-lg font-bold text-yellow-400">${vitals.temp}°</div><div class="text-xs text-gray-500">Temp</div></div>
+        <div class="glass rounded-lg p-2 text-center"><div class="text-lg font-bold text-purple-400">${vitals.rr}</div><div class="text-xs text-gray-500">RR</div></div>
+      `;
+    }
+    
+    // ==================== CHATBOT ====================
+    function toggleChatbot() {
+      isChatOpen = !isChatOpen;
+      document.getElementById('chatWindow').classList.toggle('hidden', !isChatOpen);
+      document.getElementById('chatBubble').classList.toggle('hidden', isChatOpen);
+      if (isChatOpen) document.getElementById('chatInput').focus();
+    }
+    
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+      
+      addChatMessage('user', message);
+      input.value = '';
+      
+      showTypingIndicator();
+      
+      setTimeout(() => {
+        removeTypingIndicator();
+        const response = generateChatResponse(message);
+        addChatMessage('bot', response);
+      }, 800 + Math.random() * 500);
+    }
+    
+    function addChatMessage(type, text) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `flex gap-2 ${type === 'user' ? 'justify-end' : ''}`;
+      
+      if (type === 'user') {
+        div.innerHTML = `<div class="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl rounded-br-sm p-2 max-w-[80%]"><p class="text-sm">${text}</p></div>`;
+      } else {
+        div.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs flex-shrink-0">🤖</div>
+          <div class="glass-light rounded-xl rounded-tl-sm p-2 max-w-[80%]"><p class="text-sm">${text}</p></div>
+        `;
+      }
+      
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function showTypingIndicator() {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.id = 'typingIndicator';
+      div.className = 'flex gap-2';
+      div.innerHTML = `
+        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs flex-shrink-0">🤖</div>
+        <div class="glass-light rounded-xl p-3"><div class="typing-indicator"><span></span><span></span><span></span></div></div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+      document.getElementById('typingIndicator')?.remove();
+    }
+    
+    function generateChatResponse(input) {
+      const lower = input.toLowerCase();
+      
+      if (lower.match(/^(hi|hello|hey|namaste|good morning|good evening)/)) {
+        return `Hello! 👋 I'm your healthcare assistant for Andhra Pradesh. How can I help you today? You can ask about hospitals, doctors, or book appointments.`;
+      }
+      
+      if (lower.includes('hospital') || lower.includes('clinic')) {
+        const districts = Object.keys(apHospitals);
+        const matchedDistrict = districts.find(d => lower.includes(d.toLowerCase()));
+        
+        if (matchedDistrict) {
+          const hospitals = apHospitals[matchedDistrict];
+          return `🏥 In ${matchedDistrict.charAt(0).toUpperCase() + matchedDistrict.slice(1)}, we have: ${hospitals.map(h => h.name).join(', ')}. Would you like to book an appointment?`;
+        }
+        
+        return `🏥 We have hospitals across 26 districts of Andhra Pradesh including Visakhapatnam, Vijayawada, Guntur, Tirupati, and more. Which district are you looking for?`;
+      }
+      
+      if (lower.includes('doctor') || lower.includes('specialist')) {
+        if (lower.includes('heart') || lower.includes('cardiac')) {
+          return `🫀 For cardiac specialists, I recommend Dr. Ramesh Varma at KIMS Visakhapatnam or Dr. Govinda Raju at SVIMS Tirupati. Both are highly experienced heart surgeons.`;
+        }
+        if (lower.includes('neuro') || lower.includes('brain')) {
+          return `🧠 For neurosurgery, we have Dr. Lakshmi Prasad at KIMS Visakhapatnam and Dr. Venkat Rao at Andhra Hospital Vijayawada.`;
+        }
+        if (lower.includes('bone') || lower.includes('ortho')) {
+          return `🦴 For orthopedic specialists, try Dr. Suresh Babu at Apollo Vizag or Dr. Srinivas at Ruia Hospital Tirupati.`;
+        }
+        
+        return `👨‍⚕️ We have 52+ specialist doctors across AP. What type of specialist are you looking for? (Cardiac, Neuro, Orthopedic, General, Pediatric)`;
+      }
+      
+      if (lower.includes('appointment') || lower.includes('book') || lower.includes('schedule')) {
+        return `📅 To book an appointment: Go to the Hospitals tab, select your district, choose a doctor, and click "Book". You'll receive an email confirmation!`;
+      }
+      
+      if (lower.includes('email') || lower.includes('notification') || lower.includes('confirm')) {
+        return `📧 Yes! After booking an appointment, you'll receive an email confirmation with all the details including date, time, doctor info, and hospital address.`;
+      }
+      
+      if (lower.includes('visakhapatnam') || lower.includes('vizag')) {
+        return `🏥 In Visakhapatnam, we have KIMS Hospital and Apollo Hospital with 4 specialist doctors. Would you like me to help you book an appointment?`;
+      }
+      
+      if (lower.includes('vijayawada')) {
+        return `🏥 Vijayawada has Manipal Hospital and Andhra Hospital with excellent cardiac and pediatric care. Want to see available doctors?`;
+      }
+      
+      if (lower.includes('tirupati')) {
+        return `🏥 Tirupati has SVIMS (Sri Venkateswara Institute) - one of the best hospitals in AP with top cardiac surgeons. Interested in booking?`;
+      }
+      
+      if (lower.includes('cost') || lower.includes('fee') || lower.includes('price') || lower.includes('charge')) {
+        return `💰 Consultation fees vary: General - ₹300-500, Specialist - ₹500-1000, Super Specialist - ₹1000-2000. Surgery costs depend on procedure. Shall I connect you to a hospital for exact pricing?`;
+      }
+      
+      if (lower.includes('emergency') || lower.includes('urgent')) {
+        return `🚨 For emergencies, please contact: KIMS Vizag: 0891-2505050, Apollo Vizag: 0891-2727272, SVIMS Tirupati: 0877-2287777. All have 24/7 emergency services.`;
+      }
+      
+      if (lower.includes('help') || lower.includes('what can you do')) {
+        return `I can help you with:\n🏥 Find hospitals in any AP district\n👨‍⚕️ Search for specialist doctors\n📅 Book appointments\n📧 Email confirmations\n💰 Get cost estimates\n🚨 Emergency contacts\n\nJust ask!`;
+      }
+      
+      if (lower.includes('thank') || lower.includes('thanks')) {
+        return `You're welcome! 😊 Is there anything else I can help you with regarding healthcare in Andhra Pradesh?`;
+      }
+      
+      return `I'm here to help with healthcare in Andhra Pradesh! You can ask me about:\n• Hospitals in any district\n• Finding specialist doctors\n• Booking appointments\n• Email notifications\n• Emergency services\n\nWhat would you like to know?`;
+    }
+    
+    // ==================== VOICE RECOGNITION ====================
+    async function initVoiceRecognition() {
+      if (!SpeechRecognition) {
+        document.getElementById('browserSupportNotice')?.classList.remove('hidden');
+        return;
+      }
+      
+      // Request microphone permission explicitly
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission granted
+        console.log('Microphone permission granted');
+        document.getElementById('micPermissionStatus')?.classList.add('hidden');
+        document.getElementById('micPermissionGranted')?.classList.remove('hidden');
+      } catch (err) {
+        console.error('Microphone permission denied:', err);
+        document.getElementById('micPermissionStatus')?.classList.remove('hidden');
+        document.getElementById('micPermissionGranted')?.classList.add('hidden');
+        showToast('Please allow microphone access for voice commands', 'warning');
+        return;
+      }
+      
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN';
+      recognition.maxAlternatives = 1;
+      
+      recognition.onstart = () => {
+        isListening = true;
+        updateVoiceUI(true);
+        document.getElementById('voiceTranscript').textContent = 'Listening... Speak now!';
+      };
+      
+      recognition.onend = () => {
+        isListening = false;
+        updateVoiceUI(false);
+      };
+      
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        
+        document.getElementById('voiceTranscript').textContent = transcript || 'Listening...';
+        
+        if (event.results[event.resultIndex].isFinal && transcript.trim()) {
+          processVoiceInput(transcript.trim());
+        }
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Voice error:', event.error);
+        isListening = false;
+        updateVoiceUI(false);
+        
+        if (event.error === 'no-speech') {
+          document.getElementById('voiceTranscript').textContent = 'No speech detected. Try again!';
+        } else if (event.error === 'not-allowed') {
+          document.getElementById('voiceTranscript').textContent = 'Microphone access denied. Please allow microphone.';
+        }
+      };
+    }
+    
+    function toggleVoiceRecognition() {
+      if (!recognition) {
+        initVoiceRecognition();
+        if (!recognition) {
+          showToast('Voice not supported. Use quick commands!', 'warning');
+          return;
+        }
+      }
+      
+      if (isListening) {
+        recognition.stop();
+        isListening = false;
+        updateVoiceUI(false);
+      } else {
+        try {
+          if (synthesis) synthesis.cancel();
+          recognition.start();
+        } catch (e) {
+          console.error('Voice start error:', e);
+          setTimeout(() => {
+            try { recognition.start(); } catch (e2) { console.error(e2); }
+          }, 100);
+        }
+      }
+    }
+    
+    function updateVoiceUI(listening) {
+      const btn = document.getElementById('voiceButton');
+      const micIcon = document.getElementById('micIcon');
+      const stopIcon = document.getElementById('stopIcon');
+      const soundWave = document.getElementById('soundWaveContainer');
+      
+      if (listening) {
+        btn?.classList.add('voice-active');
+        if (btn) btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        micIcon?.classList.add('hidden');
+        stopIcon?.classList.remove('hidden');
+        soundWave?.classList.remove('hidden');
+        soundWave?.classList.add('flex');
+        document.getElementById('voiceStatusIcon').textContent = '🔴';
+        document.getElementById('voiceStatusText').textContent = 'Listening...';
+      } else {
+        btn?.classList.remove('voice-active');
+        if (btn) btn.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+        micIcon?.classList.remove('hidden');
+        stopIcon?.classList.add('hidden');
+        soundWave?.classList.add('hidden');
+        soundWave?.classList.remove('flex');
+        document.getElementById('voiceStatusIcon').textContent = '🎤';
+        document.getElementById('voiceStatusText').textContent = 'Click to start';
+      }
+    }
+    
+    function processVoiceInput(text) {
+      const response = generateChatResponse(text);
+      document.getElementById('voiceResponse').textContent = response;
+      speakResponse(response);
+    }
+    
+    function simulateVoiceInput(text) {
+      document.getElementById('voiceTranscript').textContent = text;
+      processVoiceInput(text);
+    }
+    
+    function speakResponse(text) {
+      if (!synthesis) return;
+      synthesis.cancel();
+      
+      const plainText = text.replace(/[🏥👨‍⚕️📅💰🚨😊👋🫀🧠    📧]/g, '');
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.9;
+      
+      const indicator = document.getElementById('speakingIndicator');
+      utterance.onstart = () => indicator?.classList.remove('hidden');
+      utterance.onend = () => indicator?.classList.add('hidden');
+      
+      setTimeout(() => synthesis.speak(utterance), 200);
+    }
+    
+    // ==================== START ====================
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b6136b684117a30',t:'MTc2NzA5NDMxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
